@@ -1,0 +1,39 @@
+<% include ./partials/header %>
+
+<body>
+<main>
+<div class="container">
+	<div class="col s12 center-align"><h4>Room 15 Access Request</h4></div>
+	<div class="col s12 "><p class="flow-text">Hey there, <%= display_name %>! Looks like you've requested access to the Android Chatroom on Stack Overflow, a.k.a. Room 15. </p></div>
+
+	<% if(insufficientRep || badratio || defaultLikeUsername) { %>
+		<div class="col s12 "><p class="flow-text">
+			Unfortunately, you don't meet our room requirements, a.k.a. 403. <span class="grey-text lighten 2">That's an error</span>
+		</p></div>
+	<% }%>
+
+	<% if(insufficientRep || badratio) { %>
+		<div class="col s12 "><p class="flow-text">
+			In detail, it looks like<% if(insufficientRep) { %> you don't meet our minimum reputation requirement of 80, as you currently have a reputation of <%= rep %><% } %><% if(insufficientRep && badratio) { %>, and<% } %><% if(badratio) { %> you don't meet our q:a ratio requirement of 3:4, as your current ratio is <%= qaratios %><% } %>.
+		</p></div>
+	<% }%>
+
+	<% if(defaultLikeUsername) { %>
+		<div class="col s12 "><p class="flow-text">
+			It <% if(insufficientRep || badratio) { %> also<% } %> looks like you have a default username, or one similar to it (user&lt;number&gt;). We require everyone to have reasonably unique usernames to prevent confusion, and to be able to easily tell who is speaking.
+		</p></div>
+	<% }%>
+
+	<% if(insufficientRep || badratio || defaultLikeUsername) { %>
+		<div class="col s12 center-align"><p class="flow-text">
+			<span class="grey-text lighten 2">That's all we know.</span>
+		</p></div>
+	<% }%>
+</div>
+Rep: <%= rep %>
+BadRatio: <%= badratio %>
+InsufficientRep: <%= insufficientRep %>
+QARatio: <%= qaratio %>
+StringQARatio<%= qaratios %>
+DefaultLikeUsername: <%= defaultLikeUsername %>
+<% include ./partials/footer %>
