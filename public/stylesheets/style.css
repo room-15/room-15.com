@@ -6,3 +6,13 @@ body {
 a {
   color: #00B7FF;
 }
+
+.fifteen {
+	background-color: #cc130c;
+    color: #ffffff;
+    padding-left: 2px;
+    padding-right: 4px;
+    border-top: 5px;
+    border-top-color: #8d0d08;
+    border-top-style: solid;
+}
