@@ -8,10 +8,11 @@ a {
 }
 
 .fifteen {
-	background-color: #cc130c;
+    background-color: #cc130c;
     color: #ffffff;
     padding-left: 2px;
-    padding-right: 4px;
+    margin-left: 2px;
+    padding-right: 8px;
     border-top: 5px;
     border-top-color: #8d0d08;
     border-top-style: solid;
