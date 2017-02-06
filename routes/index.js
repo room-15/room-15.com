@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var fetch = require('node-fetch');
-
+var xml2js = require('xml2js');
+var XMLParser = xml2js.parseString;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -108,6 +109,28 @@ router.get('/request/:id/json', function(req, res, next) {
                 return;
             }
         });
+});
+
+router.get('/cat', function(req, res, next) {
+    var url = "http://thecatapi.com/api/images/get?format=xml&type=jpg,png";
+    fetch(url).then(function(resp) {
+        return resp.text();
+    }).then(function(body) {
+        XMLParser(body, function(err, result) {
+            res.jsonp({'src':result.response.data[0].images[0].image[0].url[0]});
+        });
+    });
+});
+
+router.get('/catgif', function(req, res, next) {
+    var url = "http://thecatapi.com/api/images/get?format=xml&type=gif";
+    fetch(url).then(function(resp) {
+        return resp.text();
+    }).then(function(body) {
+        XMLParser(body, function(err, result) {
+            res.jsonp({'src':result.response.data[0].images[0].image[0].url[0]});
+        });
+    });
 });
 
 function reduce(numerator,denominator) {
