@@ -3,7 +3,9 @@ var router = express.Router();
 var fetch = require('node-fetch');
 var xml2js = require('xml2js');
 var XMLParser = xml2js.parseString;
-
+var async = require('async');
+var AccessRequests = require('../models/accessrequests.js');
+var ObjectID = require('mongodb').ObjectID;
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Room 15' });
@@ -63,16 +65,25 @@ router.get('/request/:id/', function(req, res, next) {
 
 router.get('/request/:id/json', function(req, res, next) {
     var id = req.params.id;
+    var requests = 0;
     console.log(id);
     if(!isInt(id)) {
         res.redirect('/request');
         return;
     }
-    fetch('https://api.stackexchange.com/2.2/users/' + id + '?order=desc&key=P)hq2VlKL3FWhlsiTo*Aog((&sort=reputation&site=stackoverflow&filter=!LnNkvsiMteR29sqg1h8N)5')
+    var dayObject = ObjectID.createFromTime((Date.now() - 24*60*60*1000)/1000);
+    AccessRequests.find({user_id: id, _id: { $gt: dayObject}}).exec().then(function(docs) {
+        console.log("Requests: " + docs.length);
+        requests = docs.length;
+    }).then(function() {
+        console.log("Creating new doc");
+        AccessRequests.create({user_id: id});
+    }).then(function() {
+        fetch('https://api.stackexchange.com/2.2/users/' + id + '?order=desc&key=P)hq2VlKL3FWhlsiTo*Aog((&sort=reputation&site=stackoverflow&filter=!LnNkvsiMteR29sqg1h8N)5')
         .then(function(res) {
             return res.json();
         }).then(function(json) {
-            console.log(json);
+            //console.log(json);
             if(!json['error_id']) {
                 var rep = json['items'][0]['reputation'];
                 var questions = json['items'][0]['question_count'];
@@ -103,12 +114,13 @@ router.get('/request/:id/json', function(req, res, next) {
                     badratio = true;
                 }
                 //res.render('request', {title: "Access Request - Room 15", badratio: badratio, rep: rep, insufficientRep: insufficientRep, qaratio: qaratio, qaratios, qaratios, display_name: display_name, defaultLikeUsername: defaultLikeUsername});
-                res.jsonp({badratio: badratio, rep: rep, insufficientRep: insufficientRep, qaratio: qaratio, qaratios, qaratios, display_name: display_name, defaultLikeUsername: defaultLikeUsername, user_id: id, ping_name: ping_name});
+                res.jsonp({requests: requests, badratio: badratio, rep: rep, insufficientRep: insufficientRep, qaratio: qaratio, qaratios, qaratios, display_name: display_name, defaultLikeUsername: defaultLikeUsername, user_id: id, ping_name: ping_name});
             } else {
                 res.redirect('/request');
                 return;
             }
         });
+    });
 });
 
 router.get('/cat', function(req, res, next) {
@@ -132,6 +144,10 @@ router.get('/catgif', function(req, res, next) {
         });
     });
 });
+
+function requestsInLastDay(userid) {
+    
+}
 
 function reduce(numerator,denominator) {
   var gcd = function gcd(a,b) {

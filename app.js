@@ -4,9 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 
 var app = express();
 var index = require('./routes/index');
+
+mongoose.connect('mongodb://localhost/r15');
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
